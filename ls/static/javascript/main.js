@@ -3,6 +3,7 @@ let statusRec=false;
 let lista = [];
 let salir = false;
 
+
 if(!("webkitSpeechRecognition" in window)){
   alert("no puede usar la api")
 }
@@ -20,15 +21,48 @@ else {
 function iniciar(event) {
   for (i = event.resultIndex; i< event.results.length; i++) {
     document.getElementById('texto').innerHTML= event.results[i][0].transcript;
-    lista.push(event.results[i][0].transcript)
-    console.log(lista)
+    // tratamiento para quitar datos basura a :event.results[i][0].transcript 
+    let nombreImg = event.results[i][0].transcript
+    lista.push(nombreImg)
+    console.log('dato' , nombreImg.toLowerCase())
+    showGif(nombreImg.toLowerCase())
+    console.log(nombreImg)
     }
   }
 
+// agg a la lista la palabra, La palabra debe eliminar los el,la,etc y signos !?
 
 function changeStatusRec(){
   statusRec = !statusRec
   !statusRec ? rec.abort():rec.start()
+}
+
+
+
+
+
+
+//reconding voice animation
+
+
+
+function seachWord(list){
+  // if(list.length = 0){
+
+  // }
+
+}
+//fecth gif
+function showGif(cadena){
+  fetch(`gif/${cadena}`)
+    .then(response => response.blob())
+    .then(blob => {
+      let objectURL = URL.createObjectURL(blob);
+      let imgElement = document.getElementById('imagen-gif');
+      imgElement.src = objectURL;
+      // let $container_gif = document.getElementById('container-gif')
+      // $container_gif.appendChild(imgElement);
+    });
 }
 
 

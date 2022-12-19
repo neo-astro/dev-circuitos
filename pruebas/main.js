@@ -1,5 +1,11 @@
+
+
+let x = null
+let processFrame = null 
+
 class AudioVisualizer {
   constructor(audioContext, processFrame) {
+    this.analyser = null
     this.audioContext = audioContext;
     this.processFrame = processFrame;
     this.connectStream = this.connectStream.bind(this);
@@ -32,106 +38,70 @@ class AudioVisualizer {
     };
     requestAnimationFrame(renderFrame);
   }
+
+
+  closed(){
+    this.audioContext.suspend();
+    this.audioContext.close();
+    this.analyser.disconnect()
+    this.analyser.suspend()
+
+  }
+  open(){
+    this.audioContext.resume();
+  }
+  
 }
 
 
 
-
+// container barEffect
 const visualMainElement = document.getElementById('soundContainer');
+// n bar
 const visualValueCount = 16;
+// var for get all bar 
 let visualElements;
 
 
 
+// crear barras
+let i;
+for (i = 0; i < visualValueCount; ++i) {
+  const elm = document.createElement('div');
+  visualMainElement.appendChild(elm);
+}
 
-const createDOMElements = () => {
-  let i;
-  for (i = 0; i < visualValueCount; ++i) {
-    const elm = document.createElement('div');
-    visualMainElement.appendChild(elm);
-  }
-
-  visualElements = document.querySelectorAll('#soundContainer div');
-};
+visualElements = document.querySelectorAll('#soundContainer div');
 
 
-function init() {
-  createDOMElements();
+function run() {
 
 
   // Swapping values around for a better visual effect
   const dataMap = { 0: 15, 1: 10, 2: 8, 3: 9, 4: 6, 5: 5, 6: 2, 7: 1, 8: 0, 9: 4, 10: 3, 11: 7, 12: 11, 13: 13, 14: 14, 15: 14 };
-  const processFrame = (data) => {
+    processFrame = (data) => {
     const values = Object.values(data);
     let i;
     for (i = 0; i < visualValueCount; ++i) {
-      const value = values[dataMap[i]] / 255;
+      const value = values[dataMap[i]] / 250;
       const elmStyles = visualElements[i].style;
       elmStyles.transform = `scaleY( ${value} )`;
-      elmStyles.opacity = Math.max(.25, value);
+      elmStyles.opacity = Math.max(.3, value);
     }
   };
 
 
 
-  const a = new AudioVisualizer(new AudioContext(), processFrame);
 
 };
 
 
-// chat
-
-// window.AudioContext = window.AudioContext || window.webkitAudioContext;
-// const recognition = new webkitSpeechRecognition();
-// recognition.continuous = true;
-// recognition.interimResults = true;
-
-// var audioContext = null
-// let analyser = null
-// let dataArray = null
-// function ver(){
-//   audioContext= new AudioContext();
-//   analyser = audioContext.createAnalyser();
-//   analyser.fftSize = 512;
-//   dataArray = new Uint8Array(analyser.frequencyBinCount);
-//   console.log('mesnaje' , dataArray);
-//   recognition.onspeechstart = function() {
-//     navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-//       const microphone = audioContext.createMediaStreamSource(stream);
-//       microphone.connect(analyser);
-//       actualizarBarras();
-//     });
-//   }
-
-// }
+function init(){
+  run()
+  x = new AudioVisualizer(new AudioContext(), processFrame);
+}
 
 
-// const visualizacion = document.getElementById('visualizacion');
-// const barras = visualizacion.querySelectorAll('.barra');
-
-// function actualizarBarras() {
-//   requestAnimationFrame(actualizarBarras);
-//   analyser.getByteFrequencyData(dataArray);
-//   barras.forEach((barra, index) => {
-//     barra.style.height = `${dataArray[index]}%`;
-//   });
-// }
-
-// recognition.onresult = function(event) {
-//   const transcript = event.results[0][0].transcript;
-//   console.log(transcript);
-// }
-
-// // recognition.onspeechstart = function() {
-// //   navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-// //     const microphone = audioContext.createMediaStreamSource(stream);
-// //     microphone.connect(analyser);
-// //     actualizarBarras();
-// //   });
-// // }
-
-// recognition.onspeechend = function() {
-//   analyser.disconnect();
-// }
-
-// recognition.start();
+function end(){
+  x.closed()
+}

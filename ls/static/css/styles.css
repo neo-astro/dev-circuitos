@@ -13,17 +13,59 @@
   margin: 0;
   padding: 0;
   box-sizing: inherit;
+
+}
+
+body{
+  background: var(--greyLight-1);
 }
 
 html {
   box-sizing: border-box;
-
-  background: var(--greyLight-1);
+  /* background: var(--greyLight-1); */
 }
 
 
-.container {
-  min-height: 100vh;
+.x-hidden{
+  overflow-x: hidden;
+}
+.y-hidden{
+  overflow-y: hidden;
+}
+
+
+
+/* header */
+.header-card{
+  background-color: #6d5dfc;
+  box-shadow: 0.9rem 0.9rem 2rem 0.1rem #695aee, -0.2rem -0.2rem 0.8rem var(--white);
+  min-width: 350px;
+  min-height: 350px;
+  margin: 5px 15px;
+  border-radius: 38px 38px;
+  font-family: "Poppins", sans-serif;
+
+}
+
+
+
+.card-play{
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 35px;
+  box-shadow: 0.8rem 0.8rem 1.4rem var(--greyLight-2), -0.2rem -0.2rem 1.8rem var(--white);
+  border-radius: 3rem;
+  font-family: "Poppins", sans-serif;
+
+}
+
+
+.card-play div{
+  background: var(--greyLight-1);
+}
+
+/* .container {
+  min-height: 40vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,13 +86,13 @@ html {
   grid-column-gap: 5rem;
   grid-row-gap: 2.5rem;
   align-items: center;
-}
+} */
 
 
 /*  BUTTONS  */
 .btn {
-  width: 15rem;
-  height: 4rem;
+  width: 7.5rem;
+  height: 2rem;
   border-radius: 1rem;
   box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2), -0.2rem -0.2rem 0.5rem var(--white);
   justify-self: center;
@@ -66,8 +108,8 @@ html {
 .circle {
   grid-column: 2/3;
   grid-row: 4/6;
-  width: 9rem;
-  height: 100%;
+  width: 4.5rem;
+  height: 50%;
   justify-self: center;
   border-radius: 1rem;
   display: grid;
@@ -148,11 +190,13 @@ html {
 
 /* SOUNDBAR */
 
+
+
 .soundContainer {
   font-family: sans-serif;
   text-align: center;
-  background-color: #f3f4;
-  color: rgb(0, 0, 0);
+  margin: 0;
+
 }
 
 
@@ -163,11 +207,13 @@ html {
 .soundContainer>div {
   display: inline-block;
   width: 3px;
-  height: 100px;
-  margin: 0 7px;
+  height: 80px;
+  margin: 0 6px;
   background: currentColor;
   transform: scaleY(.5);
   opacity: .25;
+  color: #1b1b1b;
+
 }
 
 
