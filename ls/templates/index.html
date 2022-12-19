@@ -18,7 +18,7 @@
   <!-- sources App -->
   <link rel="stylesheet" href="../static/css/styles.css">
   <link href="../static/img/">
-  <script defer src="../static/javascript/main.js"></script>
+  <script src="../static/javascript/main.js" defer ></script>
 
 
  
@@ -84,88 +84,223 @@
 
 
 
-      <script defer>
+      <script >
+        let statusSoundBar = true;
+
         class AudioVisualizer {
-        constructor(audioContext, processFrame) {
-          this.audioContext = audioContext;
-          this.processFrame = processFrame;
-          this.connectStream = this.connectStream.bind(this);
-          navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-            .then(this.connectStream)
-            .catch((error) => {
-              alert('Se ha iterrumpido la entrada de audio')
-            });
-        }
+          constructor(audioContext, processFrame) {
+            this.audioContext = audioContext;
+            this.processFrame = processFrame;
+            this.connectStream = this.connectStream.bind(this);
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+              .then(this.connectStream)
+              .catch((error) => {
+                alert('Se ha iterrumpido la entrada de audio')
+              });
+          }
 
-        connectStream(stream) {
-          this.analyser = this.audioContext.createAnalyser();
-          const source = this.audioContext.createMediaStreamSource(stream);
-          source.connect(this.analyser);
-          this.analyser.smoothingTimeConstant = 0.5;
-          this.analyser.fftSize = 32;
+          connectStream(stream) {
+            this.analyser = this.audioContext.createAnalyser();
+            const source = this.audioContext.createMediaStreamSource(stream);
+            source.connect(this.analyser);
+            this.analyser.smoothingTimeConstant = 0.5;
+            this.analyser.fftSize = 32;
 
-          this.initRenderLoop(this.analyser);
-        }
+            this.initRenderLoop(this.analyser);
+          }
 
-        initRenderLoop() {
-          const frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
-          const processFrame = this.processFrame || (() => { });
+          initRenderLoop() {
+            const frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+            const processFrame = this.processFrame || (() => { });
 
-          const renderFrame = () => {
-            this.analyser.getByteFrequencyData(frequencyData);
-            processFrame(frequencyData);
+            const renderFrame = () => {
+              this.analyser.getByteFrequencyData(frequencyData);
+              processFrame(frequencyData);
 
+              requestAnimationFrame(renderFrame);
+            };
             requestAnimationFrame(renderFrame);
-          };
-          requestAnimationFrame(renderFrame);
-        }
-      }
-
-
-
-
-      const visualMainElement = document.getElementById('soundContainer');
-      const visualValueCount = 16;
-      let visualElements;
-
-
-
-
-      const createDOMElements = () => {
-        let i;
-        for (i = 0; i < visualValueCount; ++i) {
-          const elm = document.createElement('div');
-          visualMainElement.appendChild(elm);
+          }
         }
 
-        visualElements = document.querySelectorAll('#soundContainer div');
-      };
 
 
-      function init() {
-        createDOMElements();
+
+        const visualMainElement = document.getElementById('soundContainer');
+        const visualValueCount = 16;
+        let visualElements;
 
 
-        // Swapping values around for a better visual effect
-        const dataMap = { 0: 15, 1: 10, 2: 8, 3: 9, 4: 6, 5: 5, 6: 2, 7: 1, 8: 0, 9: 4, 10: 3, 11: 7, 12: 11, 13: 13, 14: 14, 15: 14 };
-        const processFrame = (data) => {
-          const values = Object.values(data);
+
+
+        const createDOMElements = () => {
           let i;
           for (i = 0; i < visualValueCount; ++i) {
-            const value = values[dataMap[i]] / 255;
-            const elmStyles = visualElements[i].style;
-            elmStyles.transform = `scaleY( ${value} )`;
-            elmStyles.opacity = Math.max(.25, value);
+            const elm = document.createElement('div');
+            visualMainElement.appendChild(elm);
           }
+
+          visualElements = document.querySelectorAll('#soundContainer div');
         };
 
 
+      function init() {
+        statusSoundBar = !statusSoundBar
 
-        const a = new AudioVisualizer(new AudioContext(), processFrame);
+        if(statusSoundBar==false){
+          createDOMElements();
+        // Swapping values around for a better visual effect
+          const dataMap = { 0: 15, 1: 10, 2: 8, 3: 9, 4: 6, 5: 5, 6: 2, 7: 1, 8: 0, 9: 4, 10: 3, 11: 7, 12: 11, 13: 13, 14: 14, 15: 14 };
+          const processFrame = (data) => {
+            const values = Object.values(data);
+            let i;
+            for (i = 0; i < visualValueCount; ++i) {
+              const value = values[dataMap[i]] / 255;
+              const elmStyles = visualElements[i].style;
+              elmStyles.transform = `scaleY( ${value} )`;
+              elmStyles.opacity = Math.max(.25, value);
+            }
+          };
+
+          const a = new AudioVisualizer(new AudioContext(), processFrame);
+
+        }
+
+
+        if(statusSoundBar) {
+          visualMainElement.innerHTML= '';
+          let imgElement = document.getElementById('imagen-gif');
+          let textoElement = document.getElementById('texto');
+          textoElement.innerHTML='';
+          imgElement.src = '';
+          alert('Toma tu webada')
+        }
 
       };
 
-      </script>
+      </script> 
+
+
+
+
+
+
+
+<!-- <script>
+  let startBarSound=false
+
+  let instancia = null
+  let processFrame = null 
+
+  class AudioVisualizer {
+    constructor(audioContext, processFrame) {
+      this.analyser = null
+      this.audioContext = audioContext;
+      this.processFrame = processFrame;
+      this.connectStream = this.connectStream.bind(this);
+      navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(this.connectStream)
+        .catch((error) => {
+          alert('Se ha iterrumpido la entrada de audio')
+        });
+    }
+
+    connectStream(stream) {
+      this.analyser = this.audioContext.createAnalyser();
+      const source = this.audioContext.createMediaStreamSource(stream);
+      source.connect(this.analyser);
+      this.analyser.smoothingTimeConstant = 0.5;
+      this.analyser.fftSize = 32;
+
+      this.initRenderLoop(this.analyser);
+    }
+
+    initRenderLoop() {
+      const frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+      const processFrame = this.processFrame || (() => { });
+
+      const renderFrame = () => {
+        this.analyser.getByteFrequencyData(frequencyData);
+        processFrame(frequencyData);
+
+        requestAnimationFrame(renderFrame);
+      };
+      requestAnimationFrame(renderFrame);
+    }
+
+
+    closed(){
+      this.audioContext.suspend();
+      this.audioContext.close();
+      this.analyser.disconnect()
+      this.analyser.suspend()
+
+    }
+    open(){
+      this.audioContext.resume();
+    }
+    
+  }
+
+
+
+  // container barEffect
+  const visualMainElement = document.getElementById('soundContainer');
+  // n bar
+  const visualValueCount = 16;
+  // var for get all bar 
+  let visualElements;
+
+
+
+  // crear barras
+  let i;
+  for (i = 0; i < visualValueCount; ++i) {
+    const elm = document.createElement('div');
+    visualMainElement.appendChild(elm);
+  }
+
+  visualElements = document.querySelectorAll('#soundContainer div');
+
+
+  function run() {
+
+
+    // Swapping values around for a better visual effect
+    const dataMap = { 0: 15, 1: 10, 2: 8, 3: 9, 4: 6, 5: 5, 6: 2, 7: 1, 8: 0, 9: 4, 10: 3, 11: 7, 12: 11, 13: 13, 14: 14, 15: 14 };
+      processFrame = (data) => {
+      const values = Object.values(data);
+      let i;
+      for (i = 0; i < visualValueCount; ++i) {
+        const value = values[dataMap[i]] / 250;
+        const elmStyles = visualElements[i].style;
+        elmStyles.transform = `scaleY( ${value} )`;
+        elmStyles.opacity = Math.max(.3, value);
+      }
+    };
+
+
+
+
+  };
+
+
+  function init(){
+    if (startBarSound==false)
+    {
+      run()
+      instancia = new AudioVisualizer(new AudioContext(), processFrame);
+      startBarSound = true
+
+    } else{
+      instancia.closed()
+    }
+  }
+
+  </script>
+
+ -->
+
 
     </div>
   </div>
